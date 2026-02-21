@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CGPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4e73df, #1cc88a);
+            text-align: center;
+            padding: 50px;
+            color: white;
+        }
+
+        .container {
+            background: white;
+            color: black;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            margin: auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        input {
+            width: 80%;
+            padding: 8px;
+            margin: 8px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #2e59d9;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>CGPA Calculator</h2>
+
+        <input type="number" id="credit" placeholder="Enter Credit"><br>
+        <input type="number" id="grade" placeholder="Enter Grade Point"><br>
+
+        <button onclick="addSubject()">Add Subject</button>
+        <button onclick="resetData()">Reset</button>
+
+        <h3 id="result">CGPA: 0.00</h3>
+    </div>
+
+<script>
+let totalPoints = 0;
+let totalCredits = 0;
+
+function addSubject() {
+    let credit = parseFloat(document.getElementById("credit").value);
+    let grade = parseFloat(document.getElementById("grade").value);
+
+    if(isNaN(credit) || isNaN(grade)) {
+        alert("Please enter valid numbers!");
+        return;
+    }
+
+    totalPoints += credit * grade;
+    totalCredits += credit;
+
+    let cgpa = totalPoints / totalCredits;
+    document.getElementById("result").innerHTML =
+        "CGPA: " + cgpa.toFixed(2);
+}
+
+function resetData() {
+    totalPoints = 0;
+    totalCredits = 0;
+    document.getElementById("result").innerHTML = "CGPA: 0.00";
+}
+</script>
+
+</body>
+</html>
