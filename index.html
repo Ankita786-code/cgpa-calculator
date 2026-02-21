@@ -1,90 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CGPA Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #4e73df, #1cc88a);
-            text-align: center;
-            padding: 50px;
-            color: white;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CGPA Calculator</title>
 
-        .container {
-            background: white;
-            color: black;
-            padding: 30px;
-            border-radius: 10px;
-            width: 350px;
-            margin: auto;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
-        input {
-            width: 80%;
-            padding: 8px;
-            margin: 8px;
-        }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
 
-        button {
-            padding: 10px 15px;
-            background: #4e73df;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+body{
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
 
-        button:hover {
-            background: #2e59d9;
-        }
+.container{
+  background:#fff;
+  padding:30px;
+  width:95%;
+  max-width:450px;
+  border-radius:15px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.3);
+}
 
-        h2 {
-            margin-bottom: 20px;
-        }
-    </style>
+h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  background:#667eea;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#764ba2;
+  transform:scale(1.05);
+}
+
+.result{
+  margin-top:20px;
+  text-align:center;
+  font-size:18px;
+  font-weight:500;
+}
+
+.history{
+  margin-top:20px;
+  max-height:120px;
+  overflow-y:auto;
+  font-size:14px;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="container">
-        <h2>CGPA Calculator</h2>
+<div class="container">
+<h2>CGPA Calculator</h2>
 
-        <input type="number" id="credit" placeholder="Enter Credit"><br>
-        <input type="number" id="grade" placeholder="Enter Grade Point"><br>
+<input type="number" id="marks" placeholder="Enter Marks (0-100)">
+<input type="number" id="credit" placeholder="Enter Credit">
 
-        <button onclick="addSubject()">Add Subject</button>
-        <button onclick="resetData()">Reset</button>
+<button onclick="addSubject()">Add Subject</button>
+<button onclick="resetData()">Reset</button>
 
-        <h3 id="result">CGPA: 0.00</h3>
-    </div>
+<div class="result">
+<p id="cgpa">CGPA: 0.00</p>
+<p id="percentage">Percentage: 0%</p>
+</div>
+
+<div class="history">
+<h4>Result History:</h4>
+<ul id="historyList"></ul>
+</div>
+
+</div>
 
 <script>
+
 let totalPoints = 0;
 let totalCredits = 0;
 
-function addSubject() {
-    let credit = parseFloat(document.getElementById("credit").value);
-    let grade = parseFloat(document.getElementById("grade").value);
-
-    if(isNaN(credit) || isNaN(grade)) {
-        alert("Please enter valid numbers!");
-        return;
-    }
-
-    totalPoints += credit * grade;
-    totalCredits += credit;
-
-    let cgpa = totalPoints / totalCredits;
-    document.getElementById("result").innerHTML =
-        "CGPA: " + cgpa.toFixed(2);
+function getGradePoint(marks){
+  if(marks>=90) return 10;   // O
+  else if(marks>=80) return 9;  // E
+  else if(marks>=70) return 8;  // A
+  else if(marks>=60) return 7;  // B
+  else if(marks>=50) return 6;  // C
+  else if(marks>=40) return 5;  // D
+  else return 0;
 }
 
-function resetData() {
-    totalPoints = 0;
-    totalCredits = 0;
-    document.getElementById("result").innerHTML = "CGPA: 0.00";
+function addSubject(){
+
+  let marks = parseFloat(document.getElementById("marks").value);
+  let credit = parseFloat(document.getElementById("credit").value);
+
+  if(isNaN(marks) || marks<0 || marks>100 || isNaN(credit) || credit<=0){
+    alert("Enter valid marks and credit");
+    return;
+  }
+
+  let gradePoint = getGradePoint(marks);
+
+  totalPoints += gradePoint * credit;
+  totalCredits += credit;
+
+  let cgpa = (totalPoints / totalCredits).toFixed(2);
+  let percentage = (cgpa * 9.5).toFixed(2);
+
+  document.getElementById("cgpa").innerText = "CGPA: " + cgpa;
+  document.getElementById("percentage").innerText = "Percentage: " + percentage + "%";
+
+  saveHistory(cgpa, percentage);
+
+  document.getElementById("marks").value = "";
+  document.getElementById("credit").value = "";
 }
+
+function resetData(){
+  totalPoints = 0;
+  totalCredits = 0;
+  document.getElementById("cgpa").innerText = "CGPA: 0.00";
+  document.getElementById("percentage").innerText = "Percentage: 0%";
+  document.getElementById("historyList").innerHTML="";
+}
+
+function saveHistory(cgpa,percentage){
+  let historyList=document.getElementById("historyList");
+  let li=document.createElement("li");
+  li.innerText="CGPA: "+cgpa+" | Percentage: "+percentage+"%";
+  historyList.appendChild(li);
+}
+
 </script>
 
 </body>
